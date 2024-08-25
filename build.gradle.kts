@@ -40,9 +40,9 @@ publishing {
             groupId = project.group.toString()
             artifactId = project.name
             version = project.version.toString()
-//            artifact(file("libs/apksigner/0.9/apksigner.jar")) {
-//                classifier = "apksigner"
-//            }
+            artifact(file("libs/apksigner/0.9/apksigner.jar")) {
+                classifier = "apksigner"
+            }
         }
     }
 }
