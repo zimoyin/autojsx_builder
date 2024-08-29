@@ -1,7 +1,6 @@
-import groovy.xml.dom.DOMCategory.attributes
-
 plugins {
     kotlin("jvm") version "2.0.0"
+    id("maven-publish")
 }
 
 group = "com.github.zimoyin"
@@ -35,4 +34,18 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["kotlin"])
+            groupId = project.group.toString()
+            artifactId = project.name
+            version = project.version.toString()
+            artifact(file("libs/apksigner/0.9/apksigner.jar")) {
+                classifier = "apksigner"
+            }
+        }
+    }
 }
