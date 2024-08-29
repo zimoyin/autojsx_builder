@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.zimoyin"
-version = "1.0.4-SNAPSHOT"
+version = "1.0.4.fix1-SNAPSHOT"
 
 repositories {
     google()
