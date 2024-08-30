@@ -5,13 +5,12 @@ import com.github.zimoyin.autox.builder.setting.LibItem.*
 import com.github.zimoyin.autox.builder.setting.PermissionsSetting.*
 import com.github.zimoyin.autox.builder.setting.ProjectJsonBean
 import com.github.zimoyin.autox.gui.ApkBuilderPojo
+import com.github.zimoyin.autox.gui.Application.Companion.application
 import com.github.zimoyin.autox.gui.ui.IPanel
 import com.github.zimoyin.autox.gui.ui.setting.handle.SettingDataHandle
-import java.awt.Color
-import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
-import java.awt.Insets
+import java.awt.*
 import java.io.File
+import java.nio.file.Files
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.system.exitProcess
@@ -44,68 +43,6 @@ class SettingPanel(private val config: ApkBuilderPojo? = null) : IPanel(GridBagL
         signatureFileTextField.text = config?.signatureFile ?: ""
         signatureAliasField.text = config?.signatureAlias ?: ""
         signaturePasswordField.text = config?.signaturePassword ?: ""
-
-        Thread{
-            Thread.sleep(1100)
-            if (projectJsonField.text == null || projectJsonField.text.isEmpty() || assetsField.text.isEmpty()) return@Thread
-            val projectJson = File(projectJsonField.text)
-            if (!projectJson.exists()) return@Thread
-            val projectJsonBean = ProjectJsonBean.findFile(projectJson.absolutePath)
-
-            appNameField.text = projectJsonBean.name
-            packageNameField.text = projectJsonBean.packageName
-            versionNameField.text = projectJsonBean.versionName
-            versionCodeField.text = projectJsonBean.versionCode.toString()
-            if (appIconTextField.text.isBlank()) appIconTextField.text = projectJsonBean.icon?.let {
-                if (File(it).exists()) it else null
-            } ?: ""
-
-            // 默认选中
-            libTerminalCheckBox.isSelected = true
-            libJackpalAndroidTerm5SoCheckBox.isSelected = true
-            libJackpalTermexec2SoCheckBox.isSelected = true
-
-            for (item in projectJsonBean.libs) {
-                when (item) {
-                    LIBJACKPAL_ANDROIDTERM5_SO -> libTerminalCheckBox.isSelected = true
-                    LIBJACKPAL_TERMEXEC2_SO -> libJackpalTermexec2SoCheckBox.isSelected = true
-                    LIBOPENCV_JAVA4_SO -> libOpencvCheckBox.isSelected = true
-                    LIBCXX_SHARED_SO -> libcxxSharedSoCheckBox.isSelected = true
-                    LIBPADDLE_LIGHT_API_SHARED_SO -> libPaddleOcrCheckBox.isSelected = true
-                    LIBHIAI_SO -> libHiaiSoCheckBox.isSelected = true
-                    LIBHIAI_IR_SO -> libHiaiIrSoCheckBox.isSelected = true
-                    LIBHIAI_IR_BUILD_SO -> libHiaiIrBuildSoCheckBox.isSelected = true
-                    LIBNATIVE_SO -> libNativeSoCheckBox.isSelected = true
-                    LIBMLKIT_GOOGLE_OCR_PIPELINE_SO -> libGoogleORCCheckBox.isSelected = true
-                    LIBTESSERACT_SO -> libTesseractCheckBox.isSelected = true
-                    LIBPNG_SO -> libPngSoCheckBox.isSelected = true
-                    LIBLEPTONICA_SO -> libleptonicaSoCheckBox.isSelected = true
-                    LIBJPEG_SO -> libJpegSoCheckBox.isSelected = true
-                    LIBP7ZIP_SO -> lib7zipCheckBox.isSelected = true
-                }
-            }
-
-            val runSetting = projectJsonBean.launchConfig
-            hideDesktopIconCheckBox.isSelected = runSetting.hideLauncher
-            stableModeCheckBox.isSelected = runSetting.stableMode
-            hideLogCheckBox.isSelected = runSetting.hideLogs
-            volumeKeyEndTaskCheckBox.isSelected = runSetting.volumeUpcontrol
-            accessibilityDescriptionTextField.text = runSetting.serviceDesc
-            startTextTextField.text = runSetting.splashText
-            if (splashImageTextField.text.isBlank()) splashImageTextField.text = runSetting.splashIcon?.let {
-                if (File(it).exists()) it else null
-            } ?: ""
-
-            for (permission in runSetting.permissions) {
-                when (permission) {
-                    ACCESSIBILITY_SERVICES -> requestAccessibilityCheckBox.isSelected = true
-                    BACKGROUND_START -> requestBackgroundPopupPermissionCheckBox.isSelected = true
-                    DRAW_OVERLAY -> requestOverlayPermissionCheckBox.isSelected = true
-                }
-            }
-
-            removeAccessibilityCheckBox.isSelected = runSetting.hideAccessibilityServices
-        }.start()
     }
 
     override fun createPanel(panel: IPanel): JComponent {
@@ -116,8 +53,20 @@ class SettingPanel(private val config: ApkBuilderPojo? = null) : IPanel(GridBagL
             scmt.projectJsonButton,
             FileNameExtensionFilter("JSON File", "json")
         )
-        addField("assets 路径:", scmt.assetsField)
-        addField("工作路径:", scmt.workDirField)
+//        addField("assets 路径:", scmt.assetsField)
+//        addField("工作路径:", scmt.workDirField)
+        addFileChooserField(
+            "assets 路径:",
+            scmt.assetsField,
+            JButton("选择文件夹"),
+            fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+        )
+        addFileChooserField(
+            "工作路径:",
+            scmt.workDirField,
+            JButton("选择文件夹"),
+            fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+        )
         addFileChooserField(
             "APK模板路径:",
             scmt.templateApkPathField,
@@ -347,6 +296,7 @@ class SettingPanel(private val config: ApkBuilderPojo? = null) : IPanel(GridBagL
             val fileChooser = JFileChooser()
             filter?.let { fileChooser.fileFilter = filter }
             // 设置文件选择模式，允许选择文件或文件夹
+            fileChooser.fileSelectionMode = fileSelectionMode
             if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 textField.text = fileChooser.selectedFile.path
             }

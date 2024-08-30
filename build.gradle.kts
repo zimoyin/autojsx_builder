@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.zimoyin"
-version = "1.0.4.fix1-SNAPSHOT"
+version = "1.0.4.fix2-SNAPSHOT"
 
 repositories {
     google()
@@ -22,7 +22,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
     implementation("org.dom4j:dom4j:2.1.4")
     implementation("org.apktool:apktool-cli:2.9.3")
-    implementation("com.formdev:flatlaf:3.5.1")
+//    implementation("com.formdev:flatlaf:3.5.1")
 //    runtimeOnly("com.formdev:flatlaf-intellij-themes:3.5.1")
 
     testImplementation(kotlin("test"))

@@ -1,13 +1,16 @@
 package com.github.zimoyin.autox.gui
 
-import com.formdev.flatlaf.FlatDarculaLaf
 import com.github.zimoyin.autox.builder.log
 import com.github.zimoyin.autox.gui.ui.setting.SettingPanel
+import java.awt.BorderLayout
+import java.awt.GridBagLayout
 import java.awt.Image
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.ImageIcon
 import javax.swing.JFrame
+import javax.swing.JLabel
+import javax.swing.JPanel
 
 /**
  *  Swing 程序入口
@@ -16,9 +19,14 @@ import javax.swing.JFrame
  */
 class Application private constructor() : JFrame("AutoX APK Builder - v$GUI_VERSION") {
     companion object {
-        var application: Application = FlatDarculaLaf.setup()
-            .let { Application() }
-            .apply { log("Application initialized") }
+//        var application: Application = FlatDarculaLaf.setup()
+//            .let { Application() }
+//            .apply { log("Application initialized") }
+//            private set
+        var application: Application = Application()
+            .apply {
+                log("Application initialized")
+            }
             private set
 
         fun start(config: ApkBuilderPojo? = null) {
@@ -26,7 +34,6 @@ class Application private constructor() : JFrame("AutoX APK Builder - v$GUI_VERS
 
             val imageIcon = ImageIcon(Application::class.java.getResource("/build.png"));
             application.iconImage = imageIcon.image.getScaledInstance(80, 80, Image.SCALE_DEFAULT)
-            application.isVisible = true
 
             // 窗体位于屏幕中间。窗体大小为 高：屏幕的五分之三，宽为 高的等比例
             val screenSize = java.awt.Toolkit.getDefaultToolkit().screenSize
@@ -44,6 +51,10 @@ class Application private constructor() : JFrame("AutoX APK Builder - v$GUI_VERS
                     log("AutoX APK Builder：Exit")
                 }
             })
+
+            application.revalidate()
+            application.repaint()
+            application.isVisible = true
         }
     }
 }
