@@ -2,15 +2,11 @@ package com.github.zimoyin.autox.gui
 
 import com.github.zimoyin.autox.builder.log
 import com.github.zimoyin.autox.gui.ui.setting.SettingPanel
-import java.awt.BorderLayout
-import java.awt.GridBagLayout
 import java.awt.Image
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.ImageIcon
 import javax.swing.JFrame
-import javax.swing.JLabel
-import javax.swing.JPanel
 
 /**
  *  Swing 程序入口
@@ -19,14 +15,8 @@ import javax.swing.JPanel
  */
 class Application private constructor() : JFrame("AutoX APK Builder - v$GUI_VERSION") {
     companion object {
-//        var application: Application = FlatDarculaLaf.setup()
-//            .let { Application() }
-//            .apply { log("Application initialized") }
-//            private set
         var application: Application = Application()
-            .apply {
-                log("Application initialized")
-            }
+            .apply { log("Application initialized") }
             private set
 
         fun start(config: ApkBuilderPojo? = null) {
